@@ -1,33 +1,33 @@
+import axios from 'axios';
 import { useState } from 'react';
 import Articles from './components/Articles';
 import './css/app.css';
 
-const App = () => {
-    // State 
+export default function App(){
+    // State
     const [search, setSearch] = useState("")
     const [articles, setArticles] = useState(false)
     const [loading, setLoading] = useState(false)
 
 
-    // Handle submit
+    // Handles submit
     const handleSubmit = e => {
         setLoading(true)
 
-        // Prevent form from submitting
+        // Prevent form from being submitted to the server
         e.preventDefault()
 
-        // Fetch data from wiki api 
-        fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${search}&format=json&origin=*`, {
-            method: "GET"
+        // Fetch data from wiki api
+        axios
+        .get(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${search}&format=json&origin=*`)
+        .then(response => {
+            let articles = response.data.query.search;
+            setArticles(articles);
+            setLoading(false);
         })
-            .then(res => res.json())
-            .then(data => {
-                 setArticles(data.query.search)
-                 setLoading(false)
-            })
-            .catch(err => console.log(err))
+        .catch(err => console.log(err))
 
-        
+
     }
 
     return (
@@ -44,6 +44,3 @@ const App = () => {
         </div>
     )
 }
-
-
-export default App; 
